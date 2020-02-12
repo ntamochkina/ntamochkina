@@ -12,3 +12,10 @@
     outline: 1px solid black;
     
 }
+.cell--black {
+    background-color: black;
+}
+/*.barrier {
+    background-color: white;
+}*/
+
