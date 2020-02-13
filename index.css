@@ -12,10 +12,11 @@
     outline: 1px solid black;
     
 }
-.cell--black {
+
+.car {
     background-color: black;
 }
-/*.barrier {
-    background-color: white;
-}*/
 
+.barrier {
+    background-color: white;
+}
