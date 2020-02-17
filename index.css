@@ -1,16 +1,15 @@
 .game-field {
     width: 1000px;
-    height: 900px;
+    height: 1000px;
     background-color: dimgray;
     display: flex;
     flex-wrap: wrap;
 }
 
 .cell {
-    width: 100px;
-    height: 90px;
+    width: 10px;
+    height: 10px;
     outline: 1px solid black;
-    
 }
 
 .car {

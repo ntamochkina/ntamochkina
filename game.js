@@ -32,6 +32,9 @@ class Field
         return this.xCount;
     }
 
+    getYCount() {
+        return this.yCount;
+    }
 }
 
 class Car 
@@ -47,7 +50,7 @@ class Car
     painting(field)
     {
         // Количество строк
-        let xCount = 10;  
+        let xCount = field.getXCount();  
         // Отрисовка машины по координатам
         let cells = field.getCells();
         for (let i = 0; i < this.points.length; i++) {
@@ -60,7 +63,7 @@ class Car
     remove(field)
     {
         // Количество строк
-        let xCount = 10; 
+        let xCount = field.getXCount(); 
         // Удаление машины по координатам
         let cells = field.getCells();
         for (let i = 0; i < this.points.length; i++) {
@@ -68,34 +71,33 @@ class Car
         cells[index].classList.remove('car');
         }
     }
-    
 
-   
-   //выход за границы дороги 
-    borderCheck()
+    borderCheck(field)
     {
+        const xCount = field.getXCount();
+        const yCount = field.getYCount();
+        let carLenght = Math.sqrt(this.points.length);
         for (let i = 0; i < this.points.length; i++)
         {
             if (this.points[i][0] < 0)
             {
-                this.points[i][0] = this.points[i][0] + 2;
+                this.points[i][0] = this.points[i][0] + carLenght;
             }
-            else if (this.points[i][0] > 9) 
+            else if (this.points[i][0] >= xCount) 
             {
-                this.points[i][0] = this.points[i][0] - 2;
+                this.points[i][0] = this.points[i][0] - carLenght;
             }
             else if ((this.points[i][1] < 0))
             {
-                this.points[i][1] = this.points[i][1] + 2;
+                this.points[i][1] = this.points[i][1] + carLenght;
             }
-            else if (this.points[i][1] > 9) 
+            else if (this.points[i][1] >= yCount) 
             {
-                this.points[i][1] = this.points[i][1] - 2;
+                this.points[i][1] = this.points[i][1] - carLenght;
             }
         }
     }
- //проверка на барьер 
- //возращаем в начало при сталновении с барьером 
+
     barrierCheck(field)
     {
         let cells = field.getCells();
@@ -146,7 +148,7 @@ class Car
                 break; 
             }
         }
-        this.borderCheck();
+        this.borderCheck(field);
         this.barrierCheck(field);
         // Нарисовать машину
         this.painting(field);
@@ -167,13 +169,16 @@ class Barrier
             throw new TypeError(stringError);
         }
         // Количество строк
-        const countX = 10;
+        const countX = field.getXCount();
+        const countY = field.getYCount();
         // Закраска
         let cells = field.getCells();
         for (let i = 0; i < this.points.length; i++)
         {
             let x = this.points[i][0];
             let y = this.points[i][1];
+            if (y >= yCount) continue;
+            if (y < 0) continue;
 
             // Обработка исключения: к нам пришло не число x
             if (!((typeof(x)) === "number")) {
@@ -189,9 +194,9 @@ class Barrier
             }
         
             // Обработка исключения: число выходит за диапозон
-            if ((x >= 10) || (y >= 10) || (x < 0) || (y < 0))
+            if ((x >= xCount) || (y >= yCount) || (x < 0) || (y < 0))
             {
-                stringError = "X = " + x + ", Y = " + y + ". Range is (0; 10)";
+                let stringError = "X = " + x + ", Y = " + y + ". Range is (0; 10)";
                 throw new RangeError(stringError, "index.js", 28);
             }
     
@@ -199,24 +204,131 @@ class Barrier
         
             cells[index].classList.add('barrier');
         }
+  
+    }
+
+    remove(field)
+    {
+        // Количество строк
+        let xCount = field.getXCount(); 
+        // Удаление машины по координатам
+        let cells = field.getCells();
+        for (let i = 0; i < this.points.length; i++) {
+            const index = xCount * this.points[i][1] + this.points[i][0];
+            if (index >= 0 && index < yCount*xCount) cells[index].classList.remove('barrier');
+        }
+    }
+
+
+    // проверка на достижение стены
+    reachingTheWall(field){
+        for (let i = 0; i < this.points.length; i++)
+        if (this.points[i][1] >= yCount) 
+            {
+                this.points[i][1] = this.points[i][1] - Math.sqrt(this.points.length);
+                //this.removeLineByLine(field);
+                this.remove(field);
+            }
+    }
+
+    //движение барьера 
+    barrierMovement (field) {
+
+        this.remove(field);
+        for (let i = 0; i < this.points.length; i++) {
+            this.points[i][1] = this.points[i][1] + 1;
+        }
+        // this.reachingTheWall(field);
+        this.painting(field);
         
     }
-    
 
+   removeLineByLine( field){
+    // Количество строк
+    let xCount = field.getXCount(); 
+    let yCount = field.getYCount(); 
+    for(let i = 0; i < this.points.length; i++)
+    {
+        if (this.points[i][1] = yCount - 1)
+        {
+            delete this.points[i][1];
+        }
+    }
+   }
 }
 
 
-let pointsCar = [[4,8], [4, 9], [5,8], [5,9]];
+
+let pointsCar = [[10, 1], [9, 2],[10, 2], [10, 3], 
+                 [10, 4], [10, 5], [10, 6], 
+                 [11, 0], [11, 1], [11, 2], [11, 3], 
+                 [11, 4], [11, 5], [11, 6], [11, 7], 
+                 [12, 0], [12, 1], [12, 2], [12, 3], 
+                 [12, 4], [12, 5], [12, 6], [12, 7], 
+                 [13, 0], [13, 1], [13, 2], [13, 3],
+                 [13, 4], [13, 5], [13, 6], [13, 7], 
+                 [14, 0], [14, 1], [14, 2], [14, 3], 
+                 [14, 4], [14, 5], [14, 6], [14, 7], 
+                 [15, 0], [15, 1], [15, 2], [15, 3], 
+                 [15, 4], [15, 5], [15, 6], [15, 7], 
+                 [16, 0], [16, 1], [16, 2], [16, 3], 
+                 [16, 4], [16, 5], [16, 6], [16, 7], 
+                 [17, 1], [17, 2], [17, 3], 
+                 [17, 4], [17, 5], [17, 6], [18,2] ,[14,8],[13,8]];
 let car = new Car(pointsCar);
 
 const nameField = document.querySelector('.game-field');
-const xCount = 10;
-const yCount = 10;
+const xCount = 100;
+const yCount = 100;
 let field = new Field(nameField, xCount, yCount);
 
-// Размеры поля
-const fieldWidth = 1000;
-const fieldHeight = 900;
+
+let barrierPoints = [[0, 0], [0, 1], [0, 2], [0, 3],
+                     [0, 4], [0, 5], [0, 6], [0, 7], 
+                     [1, 0], [1, 1], [1, 2], [1, 3], 
+                     [1, 4], [1, 5], [1, 6], [1, 7], 
+                     [2, 0], [2, 1], [2, 2], [2, 3], 
+                     [2, 4], [2, 5], [2, 6], [2, 7], 
+                     [3, 0], [3, 1], [3, 2], [3, 3], 
+                     [3, 4], [3, 5], [3, 6], [3, 7], 
+                     [4, 0], [4, 1], [4, 2], [4, 3], 
+                     [4, 4], [4, 5], [4, 6], [4, 7], 
+                     [5, 0], [5, 1], [5, 2], [5, 3], 
+                     [5, 4], [5, 5], [5, 6], [5, 7], 
+                     [6, 0], [6, 1], [6, 2], [6, 3], 
+                     [6, 4], [6, 5], [6, 6], [6, 7], 
+                     [7, 0], [7, 1], [7, 2], [7, 3], 
+                     [7, 4], [7, 5], [7, 6], [7, 7],
+                     [8, 0],[8, 1],[8, 2],[8, 3],[8, 4],[8, 5],[8,6], [8,7]];
+let barrier = new Barrier(barrierPoints);
+
+
+let barrierPoints2 = [[40,0], [40, 1], [40, 2], [40, 3], [40, 4],[40, 5],[40, 6],[40, 7],
+                     [41,0], [41, 1], [41, 2], [41, 3], [41, 4],[41, 5],[41, 6],[41, 7],
+                     [42,0], [42, 1], [42, 2], [42, 3], [42, 4],[42, 5],[42, 6],[42, 7],
+                     [43,0], [43, 1], [43, 2], [43, 3], [43, 4],[43, 5],[43, 6],[43, 7],
+                     [44,0], [44, 1], [44, 2], [44, 3], [44, 4],[44, 5],[44, 6],[44, 7],
+                                                               [45, 5],[45, 6],[45, 7],
+                                                               [46, 5],[46, 6],[46, 7],
+                                                               [47, 5],[47, 6],[47, 7],
+                                                               [48, 5],[48, 6],[48, 7],
+                                                               [49, 5],[49, 6],[49, 7]];
+                                  
+let barrier2 = new Barrier(barrierPoints2);
+
+
+let barrierPoints3 =  [ [92, 1],[93, 1] ,[94, 1] ,[95, 1],[96, 1],[97, 1],[98, 1],[99, 1],
+                        [92, 2],[93, 2] ,[94, 2] ,[95, 2],[96, 2],[97, 2],[98, 2],[99, 2],
+                        [88, 3],[89, 3] ,[90, 3] ,[91, 3],[92, 3],[93, 3],[94, 3],[95, 3],
+                        [88, 4],[89, 4] ,[90, 4] ,[91, 4],[92, 4],[93, 4],[94, 4],[95, 4],
+                        [88, 5],[89, 5] ,[90, 5] ,[91, 5],[92, 5],[93, 5],[94, 5],[95, 5],
+                        [88, 6],[89, 6] ,[90, 6] ,[91, 6],[92, 6],[93, 6],[94, 6],[95, 6],
+                        [88, 7],[89, 7] ,[90, 7] ,[91, 7],[92, 7],[93, 7],[94, 7],[95, 7]];      
+let barrier3 = new Barrier(barrierPoints3);
+
+
+
+
 let isRunning = true;
 
 let keyDown = null;
@@ -227,30 +339,18 @@ function main()
 {
     try {
         field.painting();
-
-        let points = [[0,2], [1,2], [0,3]];
-        let barrier = new Barrier(points);
-        barrier.painting(field);
-
-        let point2 = [[4,2], [5,2]];
-        let barrier2 = new Barrier(point2);
-        barrier2.painting(field);
-
         
-        let point3 = [[2,5], [2,6], [2,7], [1,8], [1,9],[0,10]];
-        let barrier3 = new Barrier(point3);
-        barrier3.painting(field);
-
-        
-        
-
         car.painting(field);
+        barrier.painting(field);
+        barrier2.painting(field);   
+        barrier3.painting(field); 
     } catch (e) {    
         // Вывод ошибок в консоль           
         console.log(e.stack);                
         return;
     }
 }
+
 
 main();
 
@@ -269,3 +369,45 @@ document.addEventListener('keydown',async function(event) {
     }
     car.traffic(keyDown, field);
 });
+
+
+
+
+// async function test()
+// {
+//     if (isRunning) 
+//     {
+//         await sleep(150);
+//     }
+//     barrier.barrierMovement(field);
+//     test();
+// }
+
+// function test() {
+//     while (true) {
+//         barrier.barrierMovement(field);
+//         if (!isRunning) break;
+//         await sleep(150);
+//     }
+// }
+
+const countFrameSkip = 10; // 60 / countFrameSkip
+let frameSkiped = 0;
+
+function test() {
+    // car.traffic(40, field);
+    if (++frameSkiped >= countFrameSkip) {
+
+        barrier.barrierMovement(field);
+        barrier2.barrierMovement(field);
+        barrier3.barrierMovement(field);
+        car.remove(field);
+        car.barrierCheck(field);
+        car.painting(field);
+        frameSkiped = 0;    
+    }
+    if (isRunning) requestAnimationFrame(test);
+}
+
+
+test();
