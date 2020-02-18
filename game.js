@@ -35,6 +35,28 @@ class Field
     getYCount() {
         return this.yCount;
     }
+
+    //управление движением барьера 
+    manageBarriers() {
+        if (barriers.length === 0) { 
+
+            barriers.push(createBarrier('first'));
+            barriers.push(createBarrier('second'));
+            barriers = barriers.filter((barrier) => !barrier.isFullOutside(field));
+           
+    }
+
+    }
+
+    //появление барьера 
+    emergingBarrier(){
+        if (barriers.length === 0) return;
+
+        for (let i = 0; i < barriers.length; i++) {
+            barriers[i].barrierMovement(field);
+            barriers[i].painting(field);
+        }
+    }
 }
 
 class Car 
@@ -154,6 +176,7 @@ class Car
         this.painting(field);
    }
 }
+let barriers = [];
 
 class Barrier 
 {
@@ -243,18 +266,13 @@ class Barrier
         
     }
 
-   removeLineByLine( field){
-    // Количество строк
-    let xCount = field.getXCount(); 
-    let yCount = field.getYCount(); 
-    for(let i = 0; i < this.points.length; i++)
-    {
-        if (this.points[i][1] = yCount - 1)
-        {
-            delete this.points[i][1];
-        }
-    }
+  
+
+//проверка выхода за пределы поля
+   isFullOutside(field) {
+        return this.points.every((point) => point[1] > yCount)
    }
+
 }
 
 
@@ -274,7 +292,7 @@ let pointsCar = [[10, 1], [9, 2],[10, 2], [10, 3],
                  [16, 0], [16, 1], [16, 2], [16, 3], 
                  [16, 4], [16, 5], [16, 6], [16, 7], 
                  [17, 1], [17, 2], [17, 3], 
-                 [17, 4], [17, 5], [17, 6], [18,2] ,[14,8],[13,8]];
+                 [17, 4], [17, 5], [17, 6], [18,2]];
 let car = new Car(pointsCar);
 
 const nameField = document.querySelector('.game-field');
@@ -283,39 +301,67 @@ const yCount = 100;
 let field = new Field(nameField, xCount, yCount);
 
 
-let barrierPoints = [[0, 0], [0, 1], [0, 2], [0, 3],
-                     [0, 4], [0, 5], [0, 6], [0, 7], 
-                     [1, 0], [1, 1], [1, 2], [1, 3], 
-                     [1, 4], [1, 5], [1, 6], [1, 7], 
-                     [2, 0], [2, 1], [2, 2], [2, 3], 
-                     [2, 4], [2, 5], [2, 6], [2, 7], 
-                     [3, 0], [3, 1], [3, 2], [3, 3], 
-                     [3, 4], [3, 5], [3, 6], [3, 7], 
-                     [4, 0], [4, 1], [4, 2], [4, 3], 
-                     [4, 4], [4, 5], [4, 6], [4, 7], 
-                     [5, 0], [5, 1], [5, 2], [5, 3], 
-                     [5, 4], [5, 5], [5, 6], [5, 7], 
-                     [6, 0], [6, 1], [6, 2], [6, 3], 
-                     [6, 4], [6, 5], [6, 6], [6, 7], 
-                     [7, 0], [7, 1], [7, 2], [7, 3], 
-                     [7, 4], [7, 5], [7, 6], [7, 7],
-                     [8, 0],[8, 1],[8, 2],[8, 3],[8, 4],[8, 5],[8,6], [8,7]];
-let barrier = new Barrier(barrierPoints);
 
 
-let barrierPoints2 = [[40,0], [40, 1], [40, 2], [40, 3], [40, 4],[40, 5],[40, 6],[40, 7],
-                     [41,0], [41, 1], [41, 2], [41, 3], [41, 4],[41, 5],[41, 6],[41, 7],
-                     [42,0], [42, 1], [42, 2], [42, 3], [42, 4],[42, 5],[42, 6],[42, 7],
-                     [43,0], [43, 1], [43, 2], [43, 3], [43, 4],[43, 5],[43, 6],[43, 7],
-                     [44,0], [44, 1], [44, 2], [44, 3], [44, 4],[44, 5],[44, 6],[44, 7],
-                                                               [45, 5],[45, 6],[45, 7],
-                                                               [46, 5],[46, 6],[46, 7],
-                                                               [47, 5],[47, 6],[47, 7],
-                                                               [48, 5],[48, 6],[48, 7],
-                                                               [49, 5],[49, 6],[49, 7]];
-                                  
-let barrier2 = new Barrier(barrierPoints2);
+const barrierShapes = {
+    first: () => {
+        return [
+            [4, -8], [5, -8], [6, -8], [7, -8],
+            [0, -8], [1, -8], [2, -8], [3, -8],
 
+            [4, -7], [5, -7], [6, -7], [7, -7], 
+            [0, -7], [1, -7], [2, -7], [3, -7],
+
+            [4, -6], [5, -6], [6, -6], [7, -6], 
+            [0, -6], [1, -6], [2, -6], [3, -6], 
+
+            [4, -5], [5, -5], [6, -5], [7, -5], 
+            [0, -5], [1, -5], [2, -5], [3, -5],
+
+            [4, -4], [5, -4], [6, -4], [7, -4], 
+            [0, -4], [1, -4], [2, -4], [3, -4], 
+
+            [4, -3], [5, -3], [6, -3], [7, -3], 
+            [0, -3], [1, -3], [2, -3], [3, -3], 
+
+            [4, -2], [5, -2], [6, -2], [7, -2], 
+            [0, -2], [1, -2], [2, -2], [3, -2],
+
+            [4, -1], [5, -1], [6, -1], [7, -1], 
+            [0, -1], [1, -1], [2, -1], [3, -1],
+
+            [4, 0],  [5, 0],  [6, 0],  [7, 0],
+            [0, 0],  [1, 0],  [2, 0],  [3, 0]
+        ];
+    },
+    second: () => {
+        return [
+            [40,0], [40, -1], [40, -2], [40, -3], [40, -4],[40, -5],[40, -6],[40, -7],
+                     [41,0], [41, -1], [41, -2], [41, -3], [41, -4],[41, -5],[41, -6],[41, -7],
+                     [42,0], [42, -1], [42, -2], [42, -3], [42, -4],[42, -5],[42, -6],[42, -7],
+                     [43,0], [43, -1], [43, -2], [43, -3], [43, -4],[43, -5],[43, -6],[43, -7],
+                     [44,0], [44, -1], [44, -2], [44, -3], [44, -4],[44, -5],[44, -6],[44, -7],
+                                                                [45, -5],[45, -6],[45, -7],
+                                                                [46, -5],[46, -6],[46, -7],
+                                                                [47, -5],[47, -6],[47, -7],
+                                                                [48, -5],[48, -6],[48, -7],
+                                                                [49, -5],[49, -6],[49, -7]
+         ];
+    }
+};
+
+
+
+const createBarrier = (type) => {
+        if ('first')  {
+        return new Barrier(barrierShapes.first());
+        }
+        else 
+        if ('second') {
+        return new Barrier(barrierShapes.second());
+        }
+        return null;
+}
 
 let barrierPoints3 =  [ [92, 1],[93, 1] ,[94, 1] ,[95, 1],[96, 1],[97, 1],[98, 1],[99, 1],
                         [92, 2],[93, 2] ,[94, 2] ,[95, 2],[96, 2],[97, 2],[98, 2],[99, 2],
@@ -339,7 +385,6 @@ function main()
 {
     try {
         field.painting();
-        
         car.painting(field);
         barrier.painting(field);
         barrier2.painting(field);   
@@ -372,42 +417,20 @@ document.addEventListener('keydown',async function(event) {
 
 
 
-
-// async function test()
-// {
-//     if (isRunning) 
-//     {
-//         await sleep(150);
-//     }
-//     barrier.barrierMovement(field);
-//     test();
-// }
-
-// function test() {
-//     while (true) {
-//         barrier.barrierMovement(field);
-//         if (!isRunning) break;
-//         await sleep(150);
-//     }
-// }
-
 const countFrameSkip = 10; // 60 / countFrameSkip
 let frameSkiped = 0;
 
 function test() {
-    // car.traffic(40, field);
     if (++frameSkiped >= countFrameSkip) {
-
-        barrier.barrierMovement(field);
-        barrier2.barrierMovement(field);
-        barrier3.barrierMovement(field);
+       // let barriers = [];
+       field.manageBarriers();
+       field.emergingBarrier();
         car.remove(field);
         car.barrierCheck(field);
         car.painting(field);
-        frameSkiped = 0;    
+        frameSkiped = 0;
     }
     if (isRunning) requestAnimationFrame(test);
 }
-
 
 test();
