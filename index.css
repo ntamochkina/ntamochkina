@@ -1,14 +1,14 @@
 .game-field {
-    width: 1000px;
-    height: 1000px;
+    /* width: 800px;
+    height: 800px; */
     background-color: dimgray;
     display: flex;
     flex-wrap: wrap;
 }
 
 .cell {
-    width: 10px;
-    height: 10px;
+    /* width: 16px;
+    height: 16px; */
     outline: 1px solid black;
 }
 
