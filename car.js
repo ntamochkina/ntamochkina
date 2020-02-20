@@ -82,12 +82,13 @@ class Car {
             let isBarrier = cells[point].classList.contains('barrier');
             if (isBarrier) {
                 this.points = JSON.parse(JSON.stringify(this.startPoints));
+                alert("Вы врезались!");
+                location.reload();
                 return;
             }
         }
     }
-    traffic(keyDown, field) 
-    {
+    traffic(keyDown, field) {
         // Удалить машину
         this.remove(field);
         // Вычислить новые координаты, в зависимости от клавиши
@@ -123,8 +124,9 @@ class Car {
             }
         }
         this.borderCheck(field);
+
         this.barrierCheck(field);
         // Нарисовать машину
-        this.painting(field);
+        // this.painting(field);
    }
 }

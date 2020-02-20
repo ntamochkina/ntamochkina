@@ -19,7 +19,7 @@ class Field
         this.yCount = yCount;
     }
 
-    painting()
+    init()
     {
         for (let i = 0; i < yCount; i++)
         {
@@ -54,7 +54,14 @@ class Field
             let a = 5 - this.barriers.length;
             let b = getRandomInRange(0, a);
             for (let i = 0; i < a; i++) {
-                this.barriers.push(createBarrier(getRandomInRange(1,5)));
+                this.barriers.push(
+                    createBarrier(
+                        getRandomInRange(1,5), {
+                            x: getRandomInRange(0,4) * 10,
+                            y: 0,
+                        }
+                    )
+                );
             }
         this.barriers = this.barriers.filter((barrier) => !barrier.isFullOutside(this));
     }
@@ -75,10 +82,17 @@ function getRandomInRange(min, max) {
 }
   
 
-class Barrier 
-{
-    constructor(points) {
-        this.points = points;
+class Barrier {
+    width = 8;
+    height = 8;
+    position = { x: 0, y: -this.height};
+    constructor({width, height, points}, position) {
+        this.width = width;
+        this.height = height;
+        this.position = position;
+        this.position.y -= this.height;
+        //создаем новый массив, который будет переносить текущий элемент в нужное нам место 
+        this.points = JSON.parse(JSON.stringify(points)).map(([x, y]) => [this.position.x + x, this.position.y + y]);
     }
 
     painting(field) 
@@ -126,7 +140,7 @@ class Barrier
         }
   
     }
-
+    
     remove(field)
     {
         // Количество строк
@@ -171,92 +185,99 @@ class Barrier
 
 }
 let pointsCar = [
-    [1, 1], [0, 2], [1, 2], [1, 3],
-    [2, 0], [2, 1], [2, 2], [2, 3],
+    [1, 3], [2, 2], [2, 3],
     [2, 4], [2, 5], [2, 6], 
-    [3, 0], [3, 1], [3, 2], [3, 3],
-    [3, 4], [3, 5], [3, 6], [3, 7],
-    [4, 0], [4, 1], [4, 2], [4, 3],
-    [4, 4], [4, 5], [4, 6], [4, 7],
-    [5, 0], [5, 1], [5, 2], [5, 3],
-    [5, 4], [5, 5], [5, 6], [5, 7],
-    [6, 0], [6, 1], [6, 2], [6, 3],
-    [6, 4], [6, 5], [6, 6], [6, 7],
-    [7, 0], [7, 1], [7, 2], [7, 3],
+    [3, 1], [3, 2], [3, 3],
+    [3, 4], [3, 5], [3, 6],
+    [3, 7], [4, 1], [4, 2], 
+    [4, 3], [4, 4], [4, 5], 
+    [4, 6], [4, 7], [5, 1], 
+    [5, 2], [5, 3], [5, 4], 
+    [5, 5], [5, 6], [5, 7],
+    [6, 1], [6, 2], [6, 3],
+    [6, 4], [6, 5], [6, 6], 
+    [6, 7], [7, 2], [7, 3],
     [7, 4], [7, 5], [7, 6], 
-    [8, 1], [8, 2], [9, 2], [8, 3],
-    [8, 4], [8, 5], 
+    [8, 3],
+    
 ];
 
 
 const barrierShapes = {
     first: () => {
-        return [
-            [4, -8], [5, -8], [6, -8], [7, -8],
-            [0, -8], [1, -8], [2, -8], [3, -8],
+        return {
+            width: 10,
+            height: 10,
+            points: [
+                [4, -8], [5, -8], [6, -8], [7, -8],
+                [0, -8], [1, -8], [2, -8], [3, -8],
 
-            [4, -7], [5, -7], [6, -7], [7, -7], 
-            [0, -7], [1, -7], [2, -7], [3, -7],
+                [4, -7], [5, -7], [6, -7], [7, -7], 
+                [0, -7], [1, -7], [2, -7], [3, -7],
 
-            [4, -6], [5, -6], [6, -6], [7, -6], 
-            [0, -6], [1, -6], [2, -6], [3, -6], 
+                [4, -6], [5, -6], [6, -6], [7, -6], 
+                [0, -6], [1, -6], [2, -6], [3, -6], 
 
-            [4, -5], [5, -5], [6, -5], [7, -5], 
-            [0, -5], [1, -5], [2, -5], [3, -5],
+                [4, -5], [5, -5], [6, -5], [7, -5], 
+                [0, -5], [1, -5], [2, -5], [3, -5],
 
-            [4, -4], [5, -4], [6, -4], [7, -4], 
-            [0, -4], [1, -4], [2, -4], [3, -4], 
+                [4, -4], [5, -4], [6, -4], [7, -4], 
+                [0, -4], [1, -4], [2, -4], [3, -4], 
 
-            [4, -3], [5, -3], [6, -3], [7, -3], 
-            [0, -3], [1, -3], [2, -3], [3, -3], 
+                [4, -3], [5, -3], [6, -3], [7, -3], 
+                [0, -3], [1, -3], [2, -3], [3, -3], 
 
-            [4, -2], [5, -2], [6, -2], [7, -2], 
-            [0, -2], [1, -2], [2, -2], [3, -2],
+                [4, -2], [5, -2], [6, -2], [7, -2], 
+                [0, -2], [1, -2], [2, -2], [3, -2],
 
-            [4, -1], [5, -1], [6, -1], [7, -1], 
-            [0, -1], [1, -1], [2, -1], [3, -1],
+                [4, -1], [5, -1], [6, -1], [7, -1], 
+                [0, -1], [1, -1], [2, -1], [3, -1],
 
-            [4, 0],  [5, 0],  [6, 0],  [7, 0],
-            [0, 0],  [1, 0],  [2, 0],  [3, 0]
-        ];
+                [4, 0],  [5, 0],  [6, 0],  [7, 0],
+                [0, 0],  [1, 0],  [2, 0],  [3, 0]
+        ]};
     },
     second: () => {
-        return [
-            [24, -8], [25, -8], [26, -8], [27, -8],
-            [20, -8], [21, -8], [22, -8], [23, -8],
-
-            [24, -7], [25, -7], [26, -7], [27, -7], 
-            [20, -7], [21, -7], [22, -7], [23, -7],
-
-            [24, -6], [25, -6], [26, -6], [27, -6], 
-            [20, -6], [21, -6], [22, -6], [23, -6], 
-
-            [24, -5], [25, -5], [26, -5], [27, -5], 
-            [20, -5], [21, -5], [22, -5], [23, -5],
-
-            [24, -4], [25, -4], [26, -4], [27, -4], 
-            [20, -4], [21, -4], [22, -4], [23, -4], 
-
-            [24, -3], [25, -3], [26, -3], [27, -3], 
-            [20, -3], [21, -3], [22, -3], [23, -3], 
-
-            [24, -2], [25, -2], [26, -2], [27, -2], 
-            [20, -2], [21, -2], [22, -2], [23, -2],
-
-            [24, -1], [25, -1], [26, -1], [27, -1], 
-            [20, -1], [21, -1], [22, -1], [23, -1],
-
-            [24, 0],  [25, 0],  [26, 0],  [27, 0],
-            [20, 0],  [21, 0],  [22, 0],  [23, 0]];
+        return{
+            width: 10,
+            height: 10,
+            points:[
+                [4, -8], [5, -8], [6, -8], [7, -8],
+                [0, -8], [1, -8], [2, -8], [3, -8],
+    
+                [4, -7], [5, -7], [6, -7], [7, -7], 
+                [0, -7], [1, -7], [2, -7], [3, -7],
+    
+                [4, -6], [5, -6], [6, -6], [7, -6], 
+                [0, -6], [1, -6], [2, -6], [3, -6], 
+    
+                [4, -5], [5, -5], [6, -5], [7, -5], 
+                [0, -5], [1, -5], [2, -5], [3, -5],
+    
+                [4, -4], [5, -4], [6, -4], [7, -4], 
+                [0, -4], [1, -4], [2, -4], [3, -4], 
+    
+                [4, -3], [5, -3], [6, -3], [7, -3], 
+                [0, -3], [1, -3], [2, -3], [3, -3], 
+    
+                [4, -2], [5, -2], [6, -2], [7, -2], 
+                [0, -2], [1, -2], [2, -2], [3, -2],
+    
+                [4, -1], [5, -1], [6, -1], [7, -1], 
+                [0, -1], [1, -1], [2, -1], [3, -1],
+    
+                [4, 0],  [5, 0],  [6, 0],  [7, 0],
+                [0, 0],  [1, 0],  [2, 0],  [3, 0]
+        ]};
     },
     third: () =>{
-        return [[42, -6],[43, -6] ,[44, -6] ,[45, -6],[46, -6],[47, -6],[48, -6],[49, -6],
-        [42, -5],[43, -5] ,[44, -5] ,[45, -5],[46, -5],[97, -5],[48, -5],[49, -5],
-        [48, -4],[49, -4] ,[40, -4] ,[41, -4],[42, -4],[93, -4],[44, -4],[45, -4],
-        [48, -3],[49, -3] ,[40, -3] ,[41, -3],[42, -3],[93, -3],[44, -3],[45, -3],
-        [48, -2],[49, -2] ,[40, -2] ,[41, -2],[42, -2],[93, -2],[44, -2],[45, -2],
-        [48, -1],[49, -1] ,[40, -1] ,[41, -1],[42, -1],[93, -1],[44, -1],[45, -1],
-        [48, 0],[49, 0] ,[40, 0] ,[41, 0],[92, 0],[43, 0],[44, 0],[45, 0]
+        return [[42, -6],  [43, -6] ,[44, -6],[45, -6],[46, -6],[47, -6],  [48, -6],
+        [42, -5],[43, -5] ,[44, -5] ,[45, -5],[46, -5],[47, -5],[48, -5],  [49, -5],
+        [48, -4],[49, -4] ,[40, -4] ,[41, -4],[42, -4],[43, -4],[44, -4],  [45, -4],
+        [48, -3],[49, -3] ,[40, -3] ,[41, -3],[42, -3],[43, -3],[44, -3],  [45, -3],
+        [48, -2],[49, -2] ,[40, -2] ,[41, -2],[42, -2],[43, -2],[44, -2],  [45, -2],
+        [48, -1],[49, -1] ,[40, -1] ,[41, -1],[42, -1],[43, -1],[44, -1],  [45, -1],
+        [48, 0],[49, 0] ,[40, 0] ,[41, 0],[42, 0],[43, 0],[44, 0],[45, 0], [49, -6],
         ];
     },
     fourth:() =>{
@@ -277,31 +298,28 @@ const barrierShapes = {
     }
 };
 
-const createBarrier = (type) => {
-        if (type == 1)  return new Barrier(barrierShapes.first());
-        else if (type == 2) return new Barrier(barrierShapes.second());
-        else if (type == 3) return new Barrier(barrierShapes.third());
-        else if (type == 4) return new Barrier(barrierShapes.fourth());
-         else if (type == 5) return new Barrier(barrierShapes.fifth());
-        return null;
+const createBarrier = (type, position) => {
+    if (type == 1) return new Barrier(barrierShapes.first(), position);
+    //if (type == 2) return new Barrier(barrierShapes.second(), position);
+    // if (type == 3) return new Barrier(barrierShapes.third(), position);
+    // if (type == 4) return new Barrier(barrierShapes.fourth(), position);
+    // if (type == 5) return new Barrier(barrierShapes.fifth(), position);
+    //return null;
+    return new Barrier(barrierShapes.first(), position);
+
 }
 
+let keyDown = null;
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+const initListeners = (el, car) => {
+    // Обработчик события keydown
+    el.addEventListener('keydown',async function(event) {
+        // Вычислить новые координаты, в зависимости от клавиши
+        keyDown = (event.keyCode);
+    });
 }
 
-// Обработчик события keydown
-document.addEventListener('keydown',async function(event) {
-    // Вычислить новые координаты, в зависимости от клавиши
-    let keyDown = (event.keyCode);
-    // 
-    
-   await sleep(300);
-   car.traffic(keyDown, field);
-});
-
-const countFrameSkip = 10; // 60 / countFrameSkip
+let countFrameSkip = 4; // 60 / countFrameSkip
 let frameSkiped = 0;
 
 let main = (field, car) => {
@@ -310,22 +328,21 @@ let main = (field, car) => {
         field.manageBarriers();
         field.emergingBarrier();
         car.remove(field);
-        car.barrierCheck(field);
+        car.traffic(keyDown, field);
+        keyDown = null;
         car.painting(field);
         frameSkiped = 0;
     }
     if (true) requestAnimationFrame(main.bind(null, field, car));
 }
 
-
 // альтернатива событию load
 document.onreadystatechange = function () {
     if (document.readyState == "complete") {
         let car = new Car(pointsCar);
+        initListeners(document, car);
         let field = new Field(nameField, xCount, yCount);
-
-        field.painting();
-        car.painting(field);
+        field.init();
         main(field, car);
     }
 }
