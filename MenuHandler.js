@@ -1,0 +1,3 @@
+PlayerReady = 'No';
+
+

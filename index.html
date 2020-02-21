@@ -1,17 +1,43 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>
-            JS Game
-        </title>
-        <link href="index.css" rel="stylesheet" >
-    </head>
-    <body>
-        <div 
-            class="game-field">
-            <canvas width="0" height="0" class="canvas" id="canvas">
-        </div>
-            <script src="car.js" defer></script>
-            <script src="game.js" defer></script>
-    </body>
+<head>
+    <title>
+        JS Game
+    </title>
+    <link href="index.css" rel="stylesheet" >
+    <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="site-header sticky-top py-1">
+    <div class="container d-flex flex-column flex-md-row justify-content-between">
+        <a class="py-2" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="d-block mx-auto"><circle cx="12" cy="12" r="10"></circle><line x1="14.31" y1="8" x2="20.05" y2="17.94"></line><line x1="9.69" y1="8" x2="21.17" y2="8"></line><line x1="7.38" y1="12" x2="13.12" y2="2.06"></line><line x1="9.69" y1="16" x2="3.95" y2="6.06"></line><line x1="14.31" y1="16" x2="2.83" y2="16"></line><line x1="16.62" y1="12" x2="10.88" y2="21.94"></line></svg>
+        </a>
+        <a class="py-2 d-none d-md-inline-block" href="#">Start</a>
+        <a class="py-2 d-none d-md-inline-block" href="#">Start</a>
+        <a class="py-2 d-none d-md-inline-block" href="#">Start</a>
+        <a class="py-2 d-none d-md-inline-block" href="#">Start</a>
+        <a class="py-2 d-none d-md-inline-block" href="#">Start</a>
+        <a class="py-2 d-none d-md-inline-block" href="#">Start</a>
+        <a class="py-2 d-none d-md-inline-block" href="#">Start</a>
+    </div>
+</nav>
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">The game</h1>
+        <p id="runPoints"></p>
+    </div>
+</section>
+<div class="bg-light justify-content-center d-flex left-car">
+    <div class="game-field"></div>
+
+</div>
+
+<script src="MenuHandler.js" defer></script>
+<script src="StartPoints.js" defer></script>
+<script src="Classes/Field.js" defer></script>
+<script src="Classes/Car.js" defer></script>
+<script src="Classes/Barrier.js" defer></script>
+<script src="game.js" defer></script>
+</body>
 </html> 
